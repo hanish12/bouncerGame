@@ -4,7 +4,12 @@ package bouncer.logic;
 
 
 
+import java.util.Date;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+
+import bouncer.sprite.PlatformsDestroyAnimation;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,6 +26,9 @@ public class BouncerGame extends ArcadeGame {
     Random randomGenerator2 = new Random();
 	public static String TAG = BouncerGame.class.getCanonicalName();
 	private Context mContext;
+	private boolean platformHit=false;
+	private int indexPlatformHit[]; 
+	Date base;
 	
 	// For text
 	private Paint mTextPaint = new Paint();
@@ -34,6 +42,7 @@ public class BouncerGame extends ArcadeGame {
 	// Refresh rate (ms)
 	private static final long UPDATE_DELAY = 20; 
 
+	Bitmap[] destroyPlatfromImages;
 	
 	int playerX;
 	int playerY;
@@ -104,11 +113,13 @@ public class BouncerGame extends ArcadeGame {
 	}
 	
 	Bitmap[] platforms;
+	int[] nrOfHits;
 	//x,y,direction
 	int[] initPoint;
 	int[] direction;
 	
 	public void playGame(Canvas c) {
+		
 		
 		drawPlayerPlatform(c);
 		c.drawBitmap(platforms[0], initPoint[0], initPoint[1], mBitmapPaint);
@@ -116,24 +127,37 @@ public class BouncerGame extends ArcadeGame {
 	    movePlatforms();
 	    drawBall(c);
 	    moveBall();
+	    if(platformHit){
+	    	
+	    	drawPlatformDestroy(c);
+	    }
+	    
+	   // List<int[]> toStr = Arrays.asList(nrOfHits);
+	   // System.out.println(nrOfHits[0] +"  " + nrOfHits[1]  );
+	   
 	}
 	
-	public static int nrOfPlatforms = 7;
+	public static int nrOfPlatforms = 8;
 	public void initPlatforms(){
 		int width = getWidth();
 		
 		platforms=new Bitmap[nrOfPlatforms];
 		initPoint=new int[nrOfPlatforms*2];
 		direction=new int[nrOfPlatforms];
+		nrOfHits=new int[nrOfPlatforms];
 		//5 platforms
 		for(int i = 0; i < nrOfPlatforms ; i++){
 		platforms[i] = getImage(R.drawable.platformbluelarger);
 		}
 		
+		for(int i = 0; i < nrOfPlatforms ; i++){
+			nrOfHits[i]=0;
+		}
+		
 		for(int i = 0; i < nrOfPlatforms*2 ; i+=2){
 		
 		//initPoint[i]=0;
-		initPoint[i] = width/2 + i*platforms[0].getWidth()/3;
+		initPoint[i] = width/2 + i*platforms[0].getWidth()/4;
 		//initPoint[i+1]=0;
 		initPoint[i+1] = 10 + i * platforms[0].getHeight();
 	
@@ -154,22 +178,56 @@ public class BouncerGame extends ArcadeGame {
 	
 
 	
-	int ballSpeed = 15;
+	int ballSpeed = 8;
 	int ballDirection = -1;
 	
 	int ballSpeedX = 5;
 	int ballDirectionX = 0;
+	
+	boolean first = true;
+	boolean second = false;
 	public void moveBall(){
 		//collision detection
 		int width = getWidth();
 		//1.with platforms
+		
+		
 		for(int i = 0; i < nrOfPlatforms*2; i+=2){
 			
 			
 			if( (ballX > initPoint[i]) && (ballX < initPoint[i] + platforms[0].getWidth())
 				&& (ballY <= initPoint[i+1] + platforms[0].getHeight())){
+				if(ballDirection==-1){
+					
+					platformHit=true;
+					indexPlatformHit[i/2]=i;
+					System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
+					
+					
+					
+//					float timeSince = 0;
+//					if(first){
+//						base=new Date();
+//						first=false;
+//						second=true;
+//						}else if(second){
+//							float before = base.getTime();
+//							Date afterBase=new Date();
+//							float after = afterBase.getTime();
+//							 timeSince = after - before; 
+//						System.out.println(" ->> "  + timeSince);
+//						first=true;
+//						second=false;
+//						}
+//					
+//					if(timeSince > 0.1)
+					nrOfHits[i/2]+=1;
+					
+						
+				}
+				//platformDestroy(i);
 				
-			  	ballDirection=1;
+			  	ballDirection=1; 
 			}
 			
 					
@@ -178,12 +236,36 @@ public class BouncerGame extends ArcadeGame {
 		for(int i = 0; i < nrOfPlatforms*2; i+=2){
 			
 			
-			if( (ballX > initPoint[i]) && (ballX < initPoint[i] + platforms[0].getWidth())
-				&& (ballY < initPoint[i+1] )){
+			//if( (ballX > initPoint[i]) && (ballX < initPoint[i] + platforms[0].getWidth())
+			//	&& (ballY < initPoint[i+1] )){
 				
-				Log.d(TAG, ballY + " < " + initPoint[i+1]);
-				//if(initPoint[i]-ballY == 1){
-			  	   // Log.d(TAG, "in == 1");
+			if( (ballX > initPoint[i]) && (ballX < initPoint[i] + platforms[0].getWidth())
+					&& ( initPoint[i+1] >= ballY  ? initPoint[i+1] - ballY <= platforms[0].getHeight() : false )){
+				Log.d(TAG, ballY + " <= " + initPoint[i+1]);
+				//if(initPoint[i]-ballY == 1){ 
+			  	   // Log.d(TAG, "in == 1"); 
+				if(ballDirection==1){
+					platformHit=true;
+					indexPlatformHit[i/2]=i;
+//					float timeSince = 0;
+//					if(first){
+//						base=new Date();
+//						first=false;
+//						second=true;
+//						}else if(second){
+//							float before = base.getTime();
+//							Date afterBase=new Date();
+//							float after = afterBase.getTime();
+//							 timeSince = after - before; 
+//						System.out.println(" ->> "  + timeSince);
+//						first=true;
+//						second=false;
+//						}
+//					
+//					if(timeSince > 0.1)
+					nrOfHits[i/2]+=1;
+					
+				}
 					ballDirection=-1;
 				//}
 			}
@@ -220,7 +302,50 @@ public class BouncerGame extends ArcadeGame {
 		
 	}
 	
-	int divideFragments = 3;
+	Bitmap platformsSprite;
+	private void drawPlatformDestroy( Canvas c) {
+		//perform some animation 
+	//	PlatformsDestroyAnimation pda = new PlatformsDestroyAnimation(platformsSprite,
+	//			initPoint[indexPlatformHit], initPoint[indexPlatformHit+1], platforms[0].getWidth(), platforms[0].getHeight()
+	//			, 4, 5); 
+		
+	//	pda.draw(c);
+		//pda.update(20);
+		
+		for(int j = 0; j < nrOfPlatforms; j++){
+			
+			for(int i = 0; i < nrOfPlatforms; i++){
+			if(nrOfHits[i]==1)
+		     c.drawBitmap(destroyPlatfromImages[0], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
+			else if(nrOfHits[i]==2)
+		     c.drawBitmap(destroyPlatfromImages[1], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
+			else if(nrOfHits[i]==3)
+			     c.drawBitmap(destroyPlatfromImages[2], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
+			else if(nrOfHits[i]==4)
+			     c.drawBitmap(destroyPlatfromImages[3], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
+			else if(nrOfHits[i]==5)
+			     c.drawBitmap(destroyPlatfromImages[4], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
+//	else if(nrOfHits[i]==6)
+		//	initPoint[indexPlatformHit[i]] = -100;
+	//		    initPoint[indexPlatformHit[i]+1] = -100;
+			}
+		
+		}
+		//put it outside window
+		//initPoint[indexPlatformHit] = -100;
+		//initPoint[indexPlatformHit+1] = -100;
+		//platformHit=false;
+	}
+	
+/*	private void update(){
+		PlatformsDestroyAnimation pda = new PlatformsDestroyAnimation(platformsSprite,
+				initPoint[indexPlatformHit], initPoint[indexPlatformHit+1], platforms[0].getWidth(), platforms[0].getHeight()
+				, 4, 5); 
+		pda.update(UPDATE_DELAY);
+	}
+	*/
+
+	int divideFragments = 5;
 	int[] xydivFr;
 
 	public void ballCollisionWithPlayer(){
@@ -240,11 +365,15 @@ public class BouncerGame extends ArcadeGame {
 		
 		//conditions depends on where ball touch player platform
 		if( (ballX > xydivFr[0]) && (ballX < xydivFr[1]) )
-			ballDirectionX=-1;
+			ballDirectionX=-2;
 		else if( (ballX > xydivFr[2]) && (ballX < xydivFr[3]) )
-			ballDirectionX=0;
+			ballDirectionX=-1;
 		else if( (ballX > xydivFr[4]) && (ballX < xydivFr[5]) )
+			ballDirectionX=0;
+		else if( (ballX > xydivFr[6]) && (ballX < xydivFr[7]) )
 			ballDirectionX=1;
+		else if( (ballX > xydivFr[8]) && (ballX < xydivFr[9]) )
+			ballDirectionX=2;
 				
 		
 		
@@ -313,7 +442,7 @@ public class BouncerGame extends ArcadeGame {
 		
 		mTextPaint.setARGB(255, 255, 255, 255);
 		
-		player = getImage(R.drawable.player_platform);
+		player = getImage(R.drawable.player_larger);
 		playerX = width/2;
 		playerY = height - player.getHeight();
 		
@@ -321,6 +450,18 @@ public class BouncerGame extends ArcadeGame {
 		ballX = playerX + player.getWidth()/2;
 		ballY = playerY - ball.getHeight();
 		xydivFr=new int[divideFragments*2];
+		
+		 //platformsSprite=getImage(R.drawable.sprite_platforms);
+		
+		destroyPlatfromImages=new Bitmap[5];
+		destroyPlatfromImages[0]=getImage(R.drawable.platform_01);
+		destroyPlatfromImages[1]=getImage(R.drawable.platform_02);
+		destroyPlatfromImages[2]=getImage(R.drawable.platform_03);
+		destroyPlatfromImages[3]=getImage(R.drawable.platform_04);
+		destroyPlatfromImages[4]=getImage(R.drawable.platform_05);
+		
+		
+		indexPlatformHit=new int[nrOfPlatforms];
 	}
 	
 	

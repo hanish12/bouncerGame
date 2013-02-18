@@ -13,7 +13,7 @@ public class Bouncer extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+         
         LayoutInflater factory = LayoutInflater.from(this);
         
         // Set game layout
