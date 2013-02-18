@@ -196,7 +196,8 @@ public class BouncerGame extends ArcadeGame {
 			
 			
 			if( (ballX > initPoint[i]) && (ballX < initPoint[i] + platforms[0].getWidth())
-				&& (ballY <= initPoint[i+1] + platforms[0].getHeight())){
+				&& (ballY <= initPoint[i+1] + platforms[0].getHeight() ? 
+					initPoint[i+1] + platforms[0].getHeight() - ballY < platforms[0].getHeight() : false)){
 				if(ballDirection==-1){
 					
 					platformHit=true;
@@ -263,6 +264,7 @@ public class BouncerGame extends ArcadeGame {
 //						}
 //					
 //					if(timeSince > 0.1)
+					System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
 					nrOfHits[i/2]+=1;
 					
 				}
@@ -325,9 +327,10 @@ public class BouncerGame extends ArcadeGame {
 			     c.drawBitmap(destroyPlatfromImages[3], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 			else if(nrOfHits[i]==5)
 			     c.drawBitmap(destroyPlatfromImages[4], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
-//	else if(nrOfHits[i]==6)
-		//	initPoint[indexPlatformHit[i]] = -100;
-	//		    initPoint[indexPlatformHit[i]+1] = -100;
+	else if(nrOfHits[i]>=6){
+			initPoint[indexPlatformHit[i]] = -100;
+			initPoint[indexPlatformHit[i]+1] = -100;
+				}
 			}
 		
 		}
