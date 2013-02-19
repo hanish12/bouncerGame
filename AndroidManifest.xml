@@ -14,21 +14,24 @@
         <activity
             android:name=".Bouncer"
             android:label="@string/title_activity_main" >
+          
+        </activity>
+        <activity
+            android:name=".Menu"  
+            android:label="@string/title_activity_menu" >
+        </activity>
+        <activity
+            android:name=".GameOver"
+            android:label="@string/title_activity_game_over" >
+        </activity>
+        <activity
+            android:name=".TitleScreen"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".Menu"
-            android:label="@string/title_activity_menu" >
-           
-        </activity>
-        <activity
-            android:name=".GameOver"
-            android:label="@string/title_activity_game_over" >
-          
         </activity>
     </application>
 

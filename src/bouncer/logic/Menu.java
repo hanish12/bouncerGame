@@ -71,4 +71,26 @@ public class Menu extends Activity {
          editor.commit();
      
         }
+    
+  public void goToTitleScreen(View view){
+    	
+        Intent intent = new Intent(this,TitleScreen.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+  	   	startActivity(intent);
+     }
+  
+  public void exit(View view){
+  	Intent intent = new Intent(this,TitleScreen.class);
+      intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	   	startActivity(intent);
+  	backgroundApp();
+  }
+  	
+  
+  
+  public void backgroundApp(){
+      
+  	this.moveTaskToBack(true);
+  	
+  }
 }

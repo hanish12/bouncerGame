@@ -46,4 +46,25 @@
         android:text="" 
 		android:textSize="15dp" />
 
+    <Button
+        android:id="@+id/retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/points"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="44dp"
+        android:text="Retry" 
+        android:onClick="goToTitleScreen"/>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/retry"
+        android:layout_alignRight="@+id/retry"
+        android:layout_below="@+id/retry"
+        android:layout_marginTop="46dp"
+        android:text="exit"
+        android:onClick="exit"/>
+
 </RelativeLayout>

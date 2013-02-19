@@ -1,17 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-    android:background="@drawable/game_background">
-
-    <Button
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="back" 
-        android:onClick="backToGame"/>
+    android:layout_height="match_parent"
+    android:background="@drawable/game_background" >
 
     <RadioGroup
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -23,20 +14,17 @@
             android:id="@+id/textView1"
             android:layout_width="153dp"
             android:layout_height="wrap_content"
-         
             android:text="Sound:"
-          
-            android:textSize="26dp"/>
+            android:textSize="26dp" />
 
         <RadioButton
             android:id="@+id/on"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
             android:layout_marginLeft="100dp"
+            android:layout_marginTop="64dp"
             android:onClick="turnSoundOffOn"
-            android:text="on"
-             />
+            android:text="on" />
 
         <RadioButton
             android:id="@+id/off"
@@ -47,6 +35,26 @@
             android:onClick="turnSoundOffOn"
             android:text="off" />
 
+        <Button
+            android:id="@+id/retryFromMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            android:layout_marginLeft="120dp"
+            
+            android:onClick="goToTitleScreen"
+            android:text="retry" />
+
     </RadioGroup>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="76dp"
+        android:layout_marginLeft="120dp"
+        android:onClick="exit"
+        android:text="exit" />
 
 </RelativeLayout>

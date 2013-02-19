@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -28,5 +29,28 @@ public class GameOver extends Activity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_game_over, menu);
         return true;
+    }
+    
+   
+    public void goToTitleScreen(View view){
+    	
+       Intent intent = new Intent(this,TitleScreen.class);
+       intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+ 	   startActivity(intent);
+    }
+    
+    public void exit(View view){
+    	Intent intent = new Intent(this,TitleScreen.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+  	   	startActivity(intent);
+    	backgroundApp();
+    }
+    	
+    
+    
+    public void backgroundApp(){
+        
+    	this.moveTaskToBack(true);
+    	
     }
 }

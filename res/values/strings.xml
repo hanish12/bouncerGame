@@ -6,5 +6,6 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_menu">Menu</string>
     <string name="title_activity_game_over">GameOver</string>
+    <string name="title_activity_title_screen">TitleScreen</string>
 
 </resources>

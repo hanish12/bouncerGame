@@ -49,6 +49,7 @@ public class BouncerGame extends ArcadeGame {
 	private static int MODE_WORLD_READABLE=1;
 	private static String PREFS_NAME="bouncer_game";
 	private static String ON_OFF_KEY="on_off";
+	private static String SPEED_NAME="speedBall";
 
 	private String playSound="on";
 	
@@ -548,8 +549,10 @@ public class BouncerGame extends ArcadeGame {
 
 	Bitmap player;
 	Bitmap ball;
+	boolean firstTime=true;
 	@Override
 	protected void initialize() {
+		if(firstTime){
 		
 		if(timer!=null)
 			timer.interrupt();
@@ -628,6 +631,12 @@ public class BouncerGame extends ArcadeGame {
 		resultPaint.setStyle(Style.FILL);
 		resultPaint.setTextSize(50);
 		
+		String ballS=LoadPreferences(SPEED_NAME);
+		ballSpeed=Integer.parseInt(ballS);
+		if(ballSpeed==0)
+			ballSpeed=1;
+		firstTime=false;
+		}
 	}
 	
 	private void checkPlaySound(){
