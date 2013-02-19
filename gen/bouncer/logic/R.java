@@ -23,9 +23,11 @@ public final class R {
         public static final int platform_05=0x7f020009;
         public static final int platformblue=0x7f02000a;
         public static final int platformbluelarger=0x7f02000b;
-        public static final int player_larger=0x7f02000c;
-        public static final int player_platform=0x7f02000d;
-        public static final int sprite_platforms=0x7f02000e;
+        public static final int player_large_hit=0x7f02000c;
+        public static final int player_larger=0x7f02000d;
+        public static final int player_platform=0x7f02000e;
+        public static final int player_small_hit=0x7f02000f;
+        public static final int sprite_platforms=0x7f020010;
     }
     public static final class id {
         public static final int back=0x7f080004;

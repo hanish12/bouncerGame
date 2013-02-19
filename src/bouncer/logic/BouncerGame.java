@@ -24,7 +24,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -50,6 +52,7 @@ public class BouncerGame extends ArcadeGame {
 
 	private String playSound="on";
 	
+	boolean large=true;
 	
 	Timer timer;
 	// For text
@@ -57,6 +60,9 @@ public class BouncerGame extends ArcadeGame {
 
 	// For Bitmaps
 	private Paint mBitmapPaint = new Paint();
+	
+	//for result text
+	private Paint resultPaint = new Paint();
 	
 	// Game name
 	public static final String NAME = "SpaceBlaster";
@@ -72,7 +78,7 @@ public class BouncerGame extends ArcadeGame {
 	int ballX;
 	int ballY;
 	
-	
+	Date timeHit;
 	
 	private int result;
 	
@@ -169,12 +175,18 @@ public class BouncerGame extends ArcadeGame {
 	   // List<int[]> toStr = Arrays.asList(nrOfHits);
 	   // System.out.println(nrOfHits[0] +"  " + nrOfHits[1]  );
 	   
-	    if(timer.getValue()>=60)
+	    if(timer.getValue()>=60){
 	    	player = getImage(R.drawable.player_platform);
+	    	large=false;
+	    }
+	   
+	    if(timer.getValue()>4)
+	    getScore();
+	    drawResult(c);
 	    
 	}
 	
-	public static int nrOfPlatforms = 8;
+	public static int nrOfPlatforms = 8; 
 	public void initPlatforms(){
 		int width = getWidth();
 		
@@ -215,7 +227,7 @@ public class BouncerGame extends ArcadeGame {
 	
 
 	
-	int ballSpeed = 8;
+	int ballSpeed = 7;
 	int ballDirection = -1;
 	
 	int ballSpeedX = 5;
@@ -224,6 +236,21 @@ public class BouncerGame extends ArcadeGame {
 	boolean first = true;
 	boolean second = false;
 	public void moveBall(){
+		
+		Date afterHit=new Date();
+		long fAfterHit=afterHit.getTime();
+		long fTimeHit=timeHit.getTime();
+		long timeSinceHit=fAfterHit-fTimeHit;
+		//System.out.println("time since " +  timeSinceHit);
+		
+		//how long show brighter platform
+		if(timeSinceHit>=500){
+		if(large)
+		player=getImage(R.drawable.player_larger);
+		else
+		player=getImage(R.drawable.player_platform);
+		}
+		
 		//collision detection
 		int width = getWidth();
 		//1.with platforms
@@ -317,6 +344,7 @@ public class BouncerGame extends ArcadeGame {
 					
 				}
 					ballDirection=-1;
+					ballCollisionWithSpecyficPlatform();
 				//}
 			}
 			
@@ -329,6 +357,12 @@ public class BouncerGame extends ArcadeGame {
 		  if( (ballX > playerX) && (ballX < playerX + player.getWidth())
 				  && (ballY >= playerY - player.getHeight())){
 			  ballCollisionWithPlayer();
+			  timeHit=new Date();
+			  if(large)
+				  player=getImage(R.drawable.player_large_hit);
+			  else
+				  player=getImage(R.drawable.player_small_hit);
+			  
 			  ballDirection=-1;
 		  }
 		//3.with up-wall
@@ -430,6 +464,37 @@ public class BouncerGame extends ArcadeGame {
 			ballDirectionX=1;
 		else if( (ballX > xydivFr[8]) && (ballX < xydivFr[9]) )
 			ballDirectionX=2;
+				
+		
+		
+	}
+	
+	
+	int divideFragmentsS = 3;
+	int[] xydivFrS;
+	public void ballCollisionWithSpecyficPlatform(){
+		
+		
+		
+		//int platformWidth = playerX + player.getWidth();
+		int interval = player.getWidth()/divideFragments;
+		
+		int tempPlayerX=playerX;
+		for(int i = 0; i < divideFragments*2; i+=2){
+			xydivFr[i] = tempPlayerX;
+			xydivFr[i+1] = tempPlayerX+interval;
+			tempPlayerX = tempPlayerX+interval;
+		}
+		Log.d(TAG,""+ xydivFr);
+		
+		//conditions depends on where ball touch player platform
+		if( (ballX > xydivFr[0]) && (ballX < xydivFr[1]) )
+			ballDirectionX=-1;
+		else if( (ballX > xydivFr[2]) && (ballX < xydivFr[3]) )
+			ballDirectionX=0;
+		else if( (ballX > xydivFr[4]) && (ballX < xydivFr[5]) )
+			ballDirectionX=1;
+	
 				
 		
 		
@@ -540,7 +605,7 @@ public class BouncerGame extends ArcadeGame {
 		
 		
 		int base = 10;
-		int step = 8;
+		int step = 18;
 		for(Integer i = 0; i < divideFragments; i++) {
 	       punctation.put(i+1,base+step*i );
 		}
@@ -553,7 +618,15 @@ public class BouncerGame extends ArcadeGame {
 		timer = new Timer();
 		timer.start();
 		
+		timeHit = new Date();
 		
+		large=true;
+		
+		//result paint
+		resultPaint = new Paint();
+		resultPaint.setColor(Color.BLACK);
+		resultPaint.setStyle(Style.FILL);
+		resultPaint.setTextSize(50);
 		
 	}
 	
@@ -571,15 +644,22 @@ public class BouncerGame extends ArcadeGame {
 	//	int height = getHeight();
 		c.drawBitmap(player, playerX, playerY, mBitmapPaint );
 	}
+	
+	
+	//public void checkResult(){
+	//	result=points/(timer.getValue()/2);
+	//	System.out.println(points + " / " + timer.getValue());
+	//	System.out.println(result);
+//		
+//	}
 
 	@Override
 	protected boolean gameOver() {
 		//here should be something logic, now just restart
 		ballDirection=-1;
 		
-		result=points/(timer.getValue()/2);
-		System.out.println(points + " / " + timer.getValue());
-		System.out.println(result);
+		//checkResult();
+		getScore();
 		
 		Intent intent = new Intent(this.getContex(), GameOver.class);
 		intent.putExtra("result", result+"");
@@ -588,11 +668,24 @@ public class BouncerGame extends ArcadeGame {
 		return false;
 	}
 
+	//returns long because super method, but return result is never used
 	@Override
 	protected long getScore() {
-		// TODO Auto-generated method stub
+		result=points/(timer.getValue());
+		System.out.println(points + " / " + timer.getValue());
+		System.out.println(result);
 		
-		return 0;
+		return result;
+		//return 0;
+	}
+	
+	private void drawResult(Canvas c){
+		
+		int width = getWidth();
+		int height = getHeight();
+		
+	    c.drawText(""+result, width/14, height,resultPaint );
+		
 	}
 	
 	
