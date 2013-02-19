@@ -22,7 +22,7 @@ public class Tools {
     
     
     public static void MessageBox( final Context ctx, final String text) {
-    	Toast.makeText(ctx, text, Toast.LENGTH_LONG).show();
+    	Toast.makeText(ctx, text, Toast.LENGTH_SHORT).show();
     }
     
     /**

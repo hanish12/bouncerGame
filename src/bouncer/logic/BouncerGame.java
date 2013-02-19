@@ -6,12 +6,22 @@ package bouncer.logic;
 
 import java.util.Date;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import bouncer.common.Timer;
 
+
+
+import bouncer.common.AudioClip;
+import bouncer.common.Tools;
 import bouncer.sprite.PlatformsDestroyAnimation;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -19,9 +29,13 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.content.SharedPreferences;
 
 public class BouncerGame extends ArcadeGame {
-
+	
+	//audio clips
+	AudioClip platformHitSound, playerHitSound;
+	
     Random randomGenerator = new Random();
     Random randomGenerator2 = new Random();
 	public static String TAG = BouncerGame.class.getCanonicalName();
@@ -30,6 +44,14 @@ public class BouncerGame extends ArcadeGame {
 	private int indexPlatformHit[]; 
 	Date base;
 	
+	private static int MODE_WORLD_READABLE=1;
+	private static String PREFS_NAME="bouncer_game";
+	private static String ON_OFF_KEY="on_off";
+
+	private String playSound="on";
+	
+	
+	Timer timer;
 	// For text
 	private Paint mTextPaint = new Paint();
 
@@ -49,6 +71,16 @@ public class BouncerGame extends ArcadeGame {
 	
 	int ballX;
 	int ballY;
+	
+	
+	
+	private int result;
+	
+	
+	private Map<Integer,Integer> punctation = new HashMap<Integer, Integer>();
+	
+	
+	private int points;
 	/**
 	 * Constructor
 	 * 
@@ -67,6 +99,7 @@ public class BouncerGame extends ArcadeGame {
 	}
 	
 	
+	private int playerSpeed = 17;
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		int tx = (int)event.getX();
@@ -82,9 +115,9 @@ public class BouncerGame extends ArcadeGame {
 		// else start game if not already started
 		
 		if ( tx > playerX + player.getWidth())
-			playerX+=10;
+			playerX+=playerSpeed;
 		else if( tx < playerX)
-			playerX-=10;
+			playerX-=playerSpeed;
 			
 			
 		
@@ -121,6 +154,7 @@ public class BouncerGame extends ArcadeGame {
 	public void playGame(Canvas c) {
 		
 		
+		
 		drawPlayerPlatform(c);
 		c.drawBitmap(platforms[0], initPoint[0], initPoint[1], mBitmapPaint);
 		drawPlatforms(c);
@@ -135,6 +169,9 @@ public class BouncerGame extends ArcadeGame {
 	   // List<int[]> toStr = Arrays.asList(nrOfHits);
 	   // System.out.println(nrOfHits[0] +"  " + nrOfHits[1]  );
 	   
+	    if(timer.getValue()>=60)
+	    	player = getImage(R.drawable.player_platform);
+	    
 	}
 	
 	public static int nrOfPlatforms = 8;
@@ -202,7 +239,7 @@ public class BouncerGame extends ArcadeGame {
 					
 					platformHit=true;
 					indexPlatformHit[i/2]=i;
-					System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
+				//	System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
 					
 					
 					
@@ -223,7 +260,12 @@ public class BouncerGame extends ArcadeGame {
 //					
 //					if(timeSince > 0.1)
 					nrOfHits[i/2]+=1;
-					
+					if(nrOfHits[i/2]<6 && nrOfHits[i/2]>0){
+						points+=punctation.get(nrOfHits[i/2]);
+						System.out.println("points incremented to : " + points);
+						}
+					if(playSound.contains("on"))
+					platformHitSound.play();
 						
 				}
 				//platformDestroy(i);
@@ -264,8 +306,14 @@ public class BouncerGame extends ArcadeGame {
 //						}
 //					
 //					if(timeSince > 0.1)
-					System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
+			//		System.out.println("i/2 = " + i/2 + " nrOfHits =  " + nrOfHits[i/2] + " index = " + indexPlatformHit[i/2]);
 					nrOfHits[i/2]+=1;
+					if(nrOfHits[i/2]<6 && nrOfHits[i/2]>0){
+						points+=punctation.get(nrOfHits[i/2]);
+						System.out.println("points incremented to : " + points);
+						}
+					if(playSound.contains("on"))
+					platformHitSound.play();
 					
 				}
 					ballDirection=-1;
@@ -331,7 +379,11 @@ public class BouncerGame extends ArcadeGame {
 			initPoint[indexPlatformHit[i]] = -100;
 			initPoint[indexPlatformHit[i]+1] = -100;
 				}
+			
+			
 			}
+			
+			
 		
 		}
 		//put it outside window
@@ -353,7 +405,8 @@ public class BouncerGame extends ArcadeGame {
 
 	public void ballCollisionWithPlayer(){
 	
-		
+		if(playSound.contains("on"))
+		playerHitSound.play();
 		
 		//int platformWidth = playerX + player.getWidth();
 		int interval = player.getWidth()/divideFragments;
@@ -432,9 +485,14 @@ public class BouncerGame extends ArcadeGame {
 	Bitmap ball;
 	@Override
 	protected void initialize() {
+		
+		if(timer!=null)
+			timer.interrupt();
+		
 		Log.d(TAG,"initalize");
 		int n;
-	
+		result=0;
+		points=0;
 			
 		
 		// Screen size
@@ -465,11 +523,52 @@ public class BouncerGame extends ArcadeGame {
 		
 		
 		indexPlatformHit=new int[nrOfPlatforms];
+		
+	//load autio clips	
+		checkPlaySound();
+		try {
+		
+		platformHitSound = getAudioClip(R.raw.sb_collisn);
+		playerHitSound = getAudioClip(R.raw.click_collision);
+		
+		} catch (Exception e) {
+			Tools.MessageBox(mContext, "Audio Error: " + e.toString());
+			// TODO fix problem with loading audiClip 
+			playSound="off";
+		
+		}
+		
+		
+		int base = 10;
+		int step = 8;
+		for(Integer i = 0; i < divideFragments; i++) {
+	       punctation.put(i+1,base+step*i );
+		}
+		
+		System.out.println(punctation.toString());
+		
+		points=0;
+		result=0;
+		
+		timer = new Timer();
+		timer.start();
+		
+		
+		
+	}
+	
+	private void checkPlaySound(){
+		String playSoundTemp=LoadPreferences(ON_OFF_KEY);
+		if(playSoundTemp.contains("on") || playSoundTemp.contains("empty"))
+			playSound="on";
+		else
+			playSound="off";
+			
 	}
 	
 	
 	public void drawPlayerPlatform(Canvas c){
-		int height = getHeight();
+	//	int height = getHeight();
 		c.drawBitmap(player, playerX, playerY, mBitmapPaint );
 	}
 
@@ -477,13 +576,42 @@ public class BouncerGame extends ArcadeGame {
 	protected boolean gameOver() {
 		//here should be something logic, now just restart
 		ballDirection=-1;
+		
+		result=points/(timer.getValue()/2);
+		System.out.println(points + " / " + timer.getValue());
+		System.out.println(result);
+		
+		Intent intent = new Intent(this.getContex(), GameOver.class);
+		intent.putExtra("result", result+"");
+		//System.out.println(timer.getValue());
+		this.getContex().startActivity(intent);
 		return false;
 	}
 
 	@Override
 	protected long getScore() {
 		// TODO Auto-generated method stub
+		
 		return 0;
 	}
+	
+	
+	/**
+	 * load shared preferences
+	 */
+	
+	 @SuppressLint("WorldReadableFiles")
+	private String LoadPreferences(String key){
+	   	   
+	        String defaultString = "empty";  
+	        String location ="";
+	        SharedPreferences sharedPreferences = this.getContex().getSharedPreferences(PREFS_NAME, MODE_WORLD_READABLE);
+	        location =  sharedPreferences.getString( key, defaultString );
+	        System.out.println("loadRestore key = " + location);
+	        	
+	        return location;
+	   
+	       }
+	
 
 }

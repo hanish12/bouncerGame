@@ -1,0 +1,49 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/game_background" >
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="310dp"
+        android:layout_marginLeft="28dp"
+        android:layout_marginRight="27dp"
+        android:layout_marginTop="108dp"
+        android:text="Game Over "
+        android:textSize="40dp"
+        tools:context=".GameOver" />
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_marginBottom="248dp"
+        android:layout_marginLeft="26dp"
+        android:layout_marginRight="144dp"
+        android:layout_marginTop="66dp"
+        android:text="Your result:"
+        android:textSize="15dp" />
+
+    <TextView
+        android:id="@+id/points"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/textView1"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignTop="@+id/textView1"
+        android:layout_marginRight="77dp"
+        android:text="" 
+		android:textSize="15dp" />
+
+</RelativeLayout>
