@@ -285,7 +285,7 @@ public class BouncerGame extends ArcadeGame {
 		
 		}
 		for(int i = 0; i < nrOfPlatforms ; i++){
-			direction[i]=i+1;
+			direction[i]=i+randomGenerator.nextInt(7)+1;
 		}
 		
 		
@@ -412,6 +412,7 @@ public class BouncerGame extends ArcadeGame {
 					nrOfHits[i/2]+=1;
 					if(nrOfHits[i/2]<6 && nrOfHits[i/2]>0){
 						points+=punctation.get(nrOfHits[i/2]);
+						Log.d("punkt",""+punctation.get(nrOfHits[i/2]));
 					//	System.out.println("points incremented to : " + points);
 						}
 					if(playSound.contains("on"))
@@ -482,19 +483,31 @@ public class BouncerGame extends ArcadeGame {
 		     c.drawBitmap(destroyPlatfromImages[0], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 			else if(nrOfHits[i]==2)
 		     c.drawBitmap(destroyPlatfromImages[1], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
-			else if(nrOfHits[i]==3)
+			else if(nrOfHits[i]==3) 
 			     c.drawBitmap(destroyPlatfromImages[2], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 			else if(nrOfHits[i]==4)
 			     c.drawBitmap(destroyPlatfromImages[3], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 			else if(nrOfHits[i]==5)
 			     c.drawBitmap(destroyPlatfromImages[4], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 	else if(nrOfHits[i]>=6){
+		if(nrOfHits[i]==6){
 		if(drawBonus==false && firstBonusEnter){
-			Log.d("drawBonus","weszlem do ifa");
-		  	drawBonus=true;
-		  	bonusDrawFromPoints[0]=initPoint[indexPlatformHit[i]];
-		  	bonusDrawFromPoints[1]=initPoint[indexPlatformHit[i+1]];
+			Log.d("drawBonus","weszlem do ifa y =  " + (initPoint[i]+1)+"hits= "+nrOfHits[i]);
+			
+		  	//if(bonusDrawFromPoints[0]==100000 || bonusDrawFromPoints[0]==0){
+		  		
+		  		//if(initPoint[i]>0 && initPoint[i+1]>0){
+//Log.d("drawBonus","inside ");
+		  	if(!(initPoint[i]==-100 || initPoint[i]+1==-100)){
+		  		Log.d("drawBonus","inside ");
+		  		drawBonus=true;
+		  		bonusDrawFromPoints[0]=initPoint[indexPlatformHit[i]];
+		  		bonusDrawFromPoints[1]=initPoint[indexPlatformHit[i]+1];
+		  	}
+		  		//}
+		  	//}
 		  	firstBonusEnter=false;
+			}
 		}
 		  	
 			initPoint[indexPlatformHit[i]] = -100;
@@ -694,11 +707,12 @@ public class BouncerGame extends ArcadeGame {
 		
 		
 		int base = 10;
-		int step = 18;
+		int step = 10;
 		for(Integer i = 0; i < divideFragments; i++) {
 	       punctation.put(i+1,base+step*i );
 		}
 		
+		Log.d("punkt",punctation.toString());
 		//System.out.println(punctation.toString());
 		
 		points=0;
@@ -771,7 +785,7 @@ public class BouncerGame extends ArcadeGame {
 	//returns long because super method, but return result is never used
 	@Override
 	protected long getScore() {
-		result=points/(timer.getValue());
+		result=points;///(timer.getValue());
 		//System.out.println(points + " / " + timer.getValue());
 		//System.out.println(result);
 		
