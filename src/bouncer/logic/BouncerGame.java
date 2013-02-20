@@ -46,6 +46,9 @@ public class BouncerGame extends ArcadeGame {
 	private int indexPlatformHit[]; 
 	Date base;
 	
+	
+	boolean drawBonus = false;
+	int[] bonusDrawFromPoints;
 	private static int MODE_WORLD_READABLE=1;
 	private static String PREFS_NAME="bouncer_game";
 	private static String ON_OFF_KEY="on_off";
@@ -184,8 +187,76 @@ public class BouncerGame extends ArcadeGame {
 	    if(timer.getValue()>4)
 	    getScore();
 	    drawResult(c);
+	
+	    
+	    int timeOfActiveBonus=15000;//in millis
+	    if(drawBonus)
+	    drawBonus(c);
+	    
+	    if(bonusCollected){
+	    Date timeNow=new Date();
+	    double fTimeNow =timeNow.getTime();
+	    double fTimeOfCollectedBonus=timeOfCollectedBonus.getTime();
+	    
+	    if(fTimeNow-fTimeOfCollectedBonus>timeOfActiveBonus)
+	    	bonusCollected=false;
+	    }
+	    
 	    
 	}
+	
+	
+	
+	int starSpeed=3;
+	Bitmap bonus;
+	boolean bonusCollected = false;
+	public void drawBonus(Canvas c){
+		int height = getHeight();
+		System.out.println("draw bonus at : " + bonusDrawFromPoints[0] + "  " + bonusDrawFromPoints[1] );
+		bonus=getImage(R.drawable.star);
+		c.drawBitmap(bonus,bonusDrawFromPoints[0],bonusDrawFromPoints[1], mBitmapPaint);
+		bonusDrawFromPoints[1]+=starSpeed;
+		
+		
+		//2.with player
+		  if( (bonusDrawFromPoints[0] > playerX) && (bonusDrawFromPoints[0] < playerX + player.getWidth())
+				  && (bonusDrawFromPoints[1] >= playerY - player.getHeight())){
+			  bonusCollisionWithPlayer();
+		
+		  }
+		  
+		//4.with down-wall
+		  else if(bonusDrawFromPoints[1] > height){
+			  destroyBonus();
+			  drawBonus=false;
+			  firstBonusEnter=true;
+			  System.out.println("star collide with end wall");
+			  
+		  }
+			  
+		
+	}
+	/**
+	 * it should destory bonus, now i move it outside
+	 */
+	public void destroyBonus(){
+		bonusDrawFromPoints[0]=100000;
+		bonusDrawFromPoints[1]=100000;
+	}
+	
+	Date timeOfCollectedBonus;
+	public void bonusCollisionWithPlayer(){
+		destroyBonus();
+		timeOfCollectedBonus=new Date();
+		bonusCollected=true;
+		drawBonus=false;
+		player=getImage(R.drawable.bonus_platform_green);
+		System.out.println("star collide with player");
+		firstBonusEnter=true;
+		
+	}
+	
+	
 	
 	public static int nrOfPlatforms = 8; 
 	public void initPlatforms(){
@@ -236,6 +307,7 @@ public class BouncerGame extends ArcadeGame {
 	
 	boolean first = true;
 	boolean second = false;
+
 	public void moveBall(){
 		
 		Date afterHit=new Date();
@@ -246,10 +318,12 @@ public class BouncerGame extends ArcadeGame {
 		
 		//how long show brighter platform
 		if(timeSinceHit>=500){
-		if(large)
-		player=getImage(R.drawable.player_larger);
-		else
-		player=getImage(R.drawable.player_platform);
+			if(!bonusCollected){
+				if(large)
+				player=getImage(R.drawable.player_larger);
+				else
+				player=getImage(R.drawable.player_platform);
+			}
 		}
 		
 		//collision detection
@@ -290,7 +364,7 @@ public class BouncerGame extends ArcadeGame {
 					nrOfHits[i/2]+=1;
 					if(nrOfHits[i/2]<6 && nrOfHits[i/2]>0){
 						points+=punctation.get(nrOfHits[i/2]);
-						System.out.println("points incremented to : " + points);
+					//	System.out.println("points incremented to : " + points);
 						}
 					if(playSound.contains("on"))
 					platformHitSound.play();
@@ -338,7 +412,7 @@ public class BouncerGame extends ArcadeGame {
 					nrOfHits[i/2]+=1;
 					if(nrOfHits[i/2]<6 && nrOfHits[i/2]>0){
 						points+=punctation.get(nrOfHits[i/2]);
-						System.out.println("points incremented to : " + points);
+					//	System.out.println("points incremented to : " + points);
 						}
 					if(playSound.contains("on"))
 					platformHitSound.play();
@@ -359,10 +433,12 @@ public class BouncerGame extends ArcadeGame {
 				  && (ballY >= playerY - player.getHeight())){
 			  ballCollisionWithPlayer();
 			  timeHit=new Date();
-			  if(large)
-				  player=getImage(R.drawable.player_large_hit);
-			  else
-				  player=getImage(R.drawable.player_small_hit);
+			  if(!bonusCollected){
+				  if(large)
+					  player=getImage(R.drawable.player_large_hit);
+				  else
+					  player=getImage(R.drawable.player_small_hit);
+			  }
 			  
 			  ballDirection=-1;
 		  }
@@ -387,6 +463,8 @@ public class BouncerGame extends ArcadeGame {
 		
 	}
 	
+	
+	boolean firstBonusEnter=true;
 	Bitmap platformsSprite;
 	private void drawPlatformDestroy( Canvas c) {
 		//perform some animation 
@@ -411,6 +489,14 @@ public class BouncerGame extends ArcadeGame {
 			else if(nrOfHits[i]==5)
 			     c.drawBitmap(destroyPlatfromImages[4], initPoint[indexPlatformHit[i]],initPoint[indexPlatformHit[i]+1],null);
 	else if(nrOfHits[i]>=6){
+		if(drawBonus==false && firstBonusEnter){
+			Log.d("drawBonus","weszlem do ifa");
+		  	drawBonus=true;
+		  	bonusDrawFromPoints[0]=initPoint[indexPlatformHit[i]];
+		  	bonusDrawFromPoints[1]=initPoint[indexPlatformHit[i+1]];
+		  	firstBonusEnter=false;
+		}
+		  	
 			initPoint[indexPlatformHit[i]] = -100;
 			initPoint[indexPlatformHit[i]+1] = -100;
 				}
@@ -613,7 +699,7 @@ public class BouncerGame extends ArcadeGame {
 	       punctation.put(i+1,base+step*i );
 		}
 		
-		System.out.println(punctation.toString());
+		//System.out.println(punctation.toString());
 		
 		points=0;
 		result=0;
@@ -635,7 +721,12 @@ public class BouncerGame extends ArcadeGame {
 		ballSpeed=Integer.parseInt(ballS);
 		if(ballSpeed==0)
 			ballSpeed=1;
+		
+		bonusDrawFromPoints=new int[2];
+		
+		
 		firstTime=false;
+		
 		}
 	}
 	
@@ -681,8 +772,8 @@ public class BouncerGame extends ArcadeGame {
 	@Override
 	protected long getScore() {
 		result=points/(timer.getValue());
-		System.out.println(points + " / " + timer.getValue());
-		System.out.println(result);
+		//System.out.println(points + " / " + timer.getValue());
+		//System.out.println(result);
 		
 		return result;
 		//return 0;
