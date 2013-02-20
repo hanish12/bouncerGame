@@ -18,7 +18,7 @@ public class Timer extends Thread {
 			try {
 				Thread.sleep(1000);
 			
-				Log.d(TAG, " " + value);
+			//	Log.d(TAG, " " + value);
 			} catch (InterruptedException e) {
 				System.out.println("timer interrupted");
 				//value=0;

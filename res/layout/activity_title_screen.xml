@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" 
-	android:background="@drawable/game_background">
+    android:layout_height="match_parent"
+    android:background="@drawable/game_background" >
 
     <TextView
         android:id="@+id/textView1"
@@ -31,17 +31,46 @@
         android:layout_alignLeft="@+id/textView1"
         android:layout_centerVertical="true"
         android:layout_marginLeft="48dp"
-        android:text="start game"
-        android:onClick="startGame" />
+        android:onClick="startGame"
+        android:text="start game" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/setBallSpeed"
+        android:text="type your name" />
+
+    <EditText
+        android:id="@+id/typedName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/setBallSpeed"
+        android:layout_marginRight="102dp"
+        android:layout_toRightOf="@+id/textView2"
+        android:text="" />
 
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/startGame"
-        android:layout_below="@+id/startGame"
-        android:layout_marginTop="52dp"
-        android:text="exit"
-        android:onClick="exit" />
+        android:layout_alignLeft="@+id/typedName"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="54dp"
+        android:onClick="exit"
+        android:text="exit" />
+
+    <Button
+        android:id="@+id/goToResultsList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button1"
+        android:layout_alignRight="@+id/startGame"
+        android:layout_marginBottom="22dp"
+        android:layout_toRightOf="@+id/textView2"
+        android:onClick="goToResultsList"
+        android:text="show results" />
 
 </RelativeLayout>

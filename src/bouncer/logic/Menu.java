@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.RadioButton;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -20,6 +22,31 @@ public class Menu extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         TAG=Menu.class.getCanonicalName();
+        
+        
+        checkDefaultRadioButton();
+        
+        
+    }
+    
+    @SuppressLint("NewApi")
+	@TargetApi(9)
+	public void checkDefaultRadioButton(){
+    	
+    	String onOff = LoadPreferences(ON_OFF_KEY);
+    	if(onOff.contains("on") || onOff.isEmpty() || onOff.contains("empty")){
+    	RadioButton on=(RadioButton) findViewById(R.id.on);
+        on.setChecked(true);
+        RadioButton off=(RadioButton) findViewById(R.id.off);
+        off.setChecked(false);
+        
+    	}else if(onOff.contains("off")){
+    		RadioButton on=(RadioButton) findViewById(R.id.on);
+            on.setChecked(false);
+            RadioButton off=(RadioButton) findViewById(R.id.off);
+            off.setChecked(true);
+    	}
+    	
     }
 
    /* @Override
@@ -56,6 +83,19 @@ public class Menu extends Activity {
 	   startActivity(intent);
 	  
    }
+   
+   @SuppressLint("WorldReadableFiles")
+  	private String LoadPreferences(String key){
+  	   	   
+  	        String defaultString = "empty";  
+  	        String location ="";
+  	        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_WORLD_READABLE);
+  	        location =  sharedPreferences.getString( key, defaultString );
+  	        System.out.println("loadRestore key = " + location);
+  	        	
+  	        return location;
+  	   
+  	       }
     
     
     private void SavePreferences(String key, String value){

@@ -14,10 +14,9 @@
         <activity
             android:name=".Bouncer"
             android:label="@string/title_activity_main" >
-          
         </activity>
         <activity
-            android:name=".Menu"  
+            android:name=".Menu"
             android:label="@string/title_activity_menu" >
         </activity>
         <activity
@@ -32,6 +31,13 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="bouncer.database.ResultsList"
+            android:label="@string/title_activity_results_list" >
+          <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="bouncer.login.TitleScreen" />
         </activity>
     </application>
 
